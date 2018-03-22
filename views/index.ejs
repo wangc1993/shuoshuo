@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+            <meta content="IE=edge" http-equiv="X-UA-Compatible">
+                <meta content="width=device-width, initial-scale=1" name="viewport">
+                    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+                    <meta content="" name="description">
+                        <meta content="" name="author">
+                            <link href="/favicon.ico" rel="icon">
+                                <title>
+                                    班级说说
+                                </title>
+                                <!-- Bootstrap core CSS -->
+                                <link href="/css/bootstrap.min.css" rel="stylesheet">
+                                    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+                                    <link href="/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+                                        <!-- Custom styles for this template -->
+                                        <link href="/css/jumbotron.css" rel="stylesheet">
+                                            <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+                                            <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+                                            <script src="/js/ie-emulation-modes-warning.js">
+                                            </script>
+                                            <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+                                            <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+                                        </link>
+                                    </link>
+                                </link>
+                            </link>
+                        </meta>
+                    </meta>
+                </meta>
+            </meta>
+        </meta>
+        <style type="text/css">
+            #txPic:hover{
+                text-decoration: none;
+            }
+            .avatar{
+                border-radius: 50%;
+            }
+            #allShuoshuo{
+                height: 350px;
+            }
+        </style>
+    </head>
+    <body>
+        <% include header.ejs %>
+        <!-- Main jumbotron for a primary marketing message or call to action -->
+        <div class="jumbotron">
+            <%if(!login){%>
+            <!-- 没有登录状态下 -->
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h1>
+                            欢迎！
+                        </h1>
+                        <p>
+                            班级说说是我们交流的园地，欢迎注册！
+                        </p>
+                        <p>
+                            <a class="btn btn-primary btn-lg" href="/register" role="button">
+                                注册
+                            </a>
+                        </p>
+                    </div>
+                    <div class="col-lg-6">
+                        <p>
+                            已有账号登录
+                        </p>
+                        <form>
+                            <div class="form-group">
+                                <label for="username">
+                                    用户名
+                                </label>
+                                <input class="form-control" id="username" placeholder="用户名（可以是中文）" type="text">
+                                </input>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">
+                                    密码
+                                </label>
+                                <input class="form-control" id="password" placeholder="请输入密码" type="password">
+                                </input>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox">
+                                        我同意协议
+                                    </input>
+                                </label>
+                            </div>
+                            <button class="btn btn-default" type="button" id="login">
+                                登录
+                            </button>
+                        </form>
+                        <div class="alert alert-danger" role="alert" id="mistake" style="display:none;">
+                    </div>
+                </div>
+            </div>
+            <%}else{%>
+            <!-- 登录之后，显示发表框 -->
+            <div class="container">
+                <div class="col-lg-1">
+                    <a id="txPic" href="/upload">
+                        <img class="avatar" src="/avatar/<%=avatar%>">
+                    </a>
+                </div>
+                <div class="col-lg-6 col-lg-offset-1">
+                    <p><%=username%></p>
+                    <textarea name="content" id="content" cols="80" rows="4"></textarea>
+                    <button class="btn btn-success" type="button" id="fabiao">
+                        发表
+                    </button>
+                </div>
+            </div>
+            <%}%>
+        </div>
+        <div class="container">
+            <!-- 简单分页 -->
+            <nav>
+              <ul class="pagination" id="pagination">
+              </ul>
+            </nav>
+            <!-- Example row of columns -->
+            <!-- 显示说说 -->
+            <div class="row" id="allShuoshuo">
+            </div>
+            <hr>
+                <footer>
+                    <p>
+                        © 2016 Company, Inc.
+                    </p>
+                </footer>
+            </hr>
+        </div>
+        <!-- /container -->
+        <!-- 模板引擎 -->
+        <script type="text/template" id="temp">
+            <div class="col-md-4">
+                <h2><img width="40" class="avatar" src="/avatar/{{=avatar}}">{{=username}}说：</h2>
+                <p>{{=content}}</p>
+                <p>{{=datetime}}</p>
+                <p><a href="#" class="btn btn-default" role="button">查看详细信息</a></p>
+            </div>
+        </script>
+        <!-- Bootstrap core JavaScript
+    ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="/js/jquery-1.11.3.min.js">
+        </script>
+        <script>
+            window.jQuery || document.write('<script src="/js/jquery-1.11.3.min.js"><\/script>')
+        </script>
+        <script src="/js/bootstrap.min.js">
+        </script>
+        <script src="/js/underscore-noflect.js"></script>
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <script src="/js/ie10-viewport-bug-workaround.js">
+        </script>
+        <script type="text/javascript">
+            $(function(){
+                let $allShuoshuo = $('#allShuoshuo');
+                /*得到模板*/
+                let compiled = _.template($('#temp').html());
+                /*ajax读取分页的说说*/
+                getPagePosts(0);
+                function getPagePosts(i){
+                    /*清空上页的说说*/
+                    $allShuoshuo.html('');
+
+                    $.ajax({
+                    'url': '/getAllShuoshuo?page=' + i,
+                    'type': 'get',
+                    'success': function(data){
+                        /*同步操作（迭代器），避免浏览器兼容*/
+                        iterator(0);
+                        /*迭代器*/
+                        function iterator(i){
+                            if(i == data.result.length){
+                                /*请求完毕*/
+                                return;
+                            }
+                            $.ajax({
+                                'url': 'getUserInfo?username=' + data.result[i].username,
+                                'type': 'get',
+                                'success': function(result){
+                                    /*修改字典，给字典增加一项*/
+                                    data.result[i].avatar = result.avatar;
+                                    /*组装模板*/
+                                    let template = compiled(data.result[i]);
+                                    /*添加dom*/
+                                    $allShuoshuo.append(template);
+                                    iterator(i + 1);
+                                }
+                            });
+                        }
+                    }
+                });
+                }
+
+                /*ajax分页*/
+                /*获取说说总数*/
+                $.ajax({
+                    'url': '/getPostsAmount',
+                    'type': 'get',
+                    'success': function(amount){
+                        /*得到页数*/
+                        let pageAmount = Math.ceil(amount/6);
+                        for(let i=0; i<pageAmount; i++){
+                            $('#pagination').append('<li><a href="javascript:void(0);">' + i + '</a></li>');
+                            $('#pagination li:first').addClass('active');
+                        }
+                        $('#pagination li').click(function(){
+                            let index = $(this).index();
+                            $('#pagination li').eq(index).siblings().removeClass('active').end().addClass('active');
+                            getPagePosts(index);
+                        });
+                    }
+                });
+
+                /*当输入框获得焦点时，错误框消失*/
+                $('input').focus(function(){
+                    $('#mistake').fadeOut();
+                });
+                $('#login').click(function(){
+                    $.post('/doLogin',{
+                        "username": $('#username').val(),
+                        "password": $('#password').val()
+                    },function(result){
+                        if(result == "1"){
+                            /*登录成功*/
+                            window.location = '/';
+                        }else if(result == "-1"){
+                            $('#mistake').fadeIn();
+                            $('#mistake').html('用户名不存在！');
+                        }else if(result == '-2'){
+                            $('#mistake').fadeIn();
+                            $('#mistake').html('密码错误！');
+                        }
+                    });
+                });
+
+                /*登录*/
+                $('#login').click(function(){
+                    $.post('/doLogin',{
+                        "username": $('#username').val(),
+                        "password": $('#password').val()
+                    },function(result){
+                        if(result == "1"){
+                            /*登录成功*/
+                            alert('登录成功！点击确定，自动登录');
+                            window.location = '/';
+                        }else if(result == "-1"){
+                            $('#mistake').fadeIn();
+                            $('#mistake').html('用户名不存在！');
+                        }else if(result == '-2'){
+                            $('#mistake').fadeIn();
+                            $('#mistake').html('密码错误！');
+                        }
+                    });
+                });
+
+                /*发表说说*/
+                $('#fabiao').click(function(){
+                    $.post('/post',{
+                        "content": $('#content').val()
+                    },function(result){
+                        if(result == "1"){
+                            /*发表成功*/
+                            alert('发表成功');
+                        }else{
+                            /*发表失败*/
+                            alert('发表失败，请联系管理员');
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

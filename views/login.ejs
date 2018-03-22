@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+            <meta content="IE=edge" http-equiv="X-UA-Compatible">
+                <meta content="width=device-width, initial-scale=1" name="viewport">
+                    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+                    <meta content="" name="description">
+                        <meta content="" name="author">
+                            <link href="/favicon.ico" rel="icon">
+                                <title>
+                                    登录--班级说说
+                                </title>
+                                <!-- Bootstrap core CSS -->
+                                <link href="/css/bootstrap.min.css" rel="stylesheet">
+                                    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+                                    <link href="/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+                                        <!-- Custom styles for this template -->
+                                        <link href="/css/jumbotron.css" rel="stylesheet">
+                                            <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+                                            <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+                                            <script src="/js/ie-emulation-modes-warning.js">
+                                            </script>
+                                            <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+                                            <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+                                        </link>
+                                    </link>
+                                </link>
+                            </link>
+                        </meta>
+                    </meta>
+                </meta>
+            </meta>
+        </meta>
+        <style type="text/css">
+            body{
+                padding-top: 100px;
+            }
+            #mistake{
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <% include header.ejs %>
+        <div class="container">
+            <!-- Example row of columns -->
+            <div class="row col-lg-6">
+                <h1>欢迎注册</h1>
+                <form>
+                    <div class="form-group">
+                        <label for="username">
+                            用户名
+                        </label>
+                        <input class="form-control" id="username" placeholder="用户名（可以是中文）" type="text">
+                        </input>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">
+                            密码
+                        </label>
+                        <input class="form-control" id="password" placeholder="请输入密码" type="password">
+                        </input>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox">
+                                我同意协议
+                            </input>
+                        </label>
+                    </div>
+                    <button class="btn btn-default" type="button" id="login">
+                        登录
+                    </button>
+                </form>
+                <div class="alert alert-danger" role="alert" id="mistake">
+                </div>
+            </div>
+            <hr>
+                <footer>
+                    <p>
+                        © 2016 Company, Inc.
+                    </p>
+                </footer>
+            </hr>
+        </div>
+        <!-- /container -->
+        <!-- Bootstrap core JavaScript
+    ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="/js/jquery-1.11.3.min.js">
+        </script>
+        <script>
+            window.jQuery || document.write('<script src="/js/jquery-1.11.3.min.js"><\/script>')
+        </script>
+        <script src="/js/bootstrap.min.js">
+        </script>
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <script src="/js/ie10-viewport-bug-workaround.js">
+        </script>
+        <script type="text/javascript">
+            /*注册按钮的事件，用ajax提交表单*/
+            $(function(){
+                /*当输入框获得焦点时，错误框消失*/
+                $('input').focus(function(){
+                    $('#mistake').fadeOut();
+                });
+                $('#login').click(function(){
+                    $.post('/doLogin',{
+                        "username": $('#username').val(),
+                        "password": $('#password').val()
+                    },function(result){
+                        if(result == "1"){
+                            /*登录成功*/
+                            alert('登录成功！点击确定，自动登录');
+                            window.location = '/';
+                        }else if(result == "-1"){
+                            $('#mistake').fadeIn();
+                            $('#mistake').html('用户名不存在！');
+                        }else if(result == '-2'){
+                            $('#mistake').fadeIn();
+                            $('#mistake').html('密码错误！');
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>
